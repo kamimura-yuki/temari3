@@ -1,3 +1,7 @@
+console.log("main.js loaded");
+alert("main.js loaded");
+
+
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 import { ARButton } from "https://unpkg.com/three@0.160.0/examples/jsm/webxr/ARButton.js";
 import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
@@ -120,3 +124,4 @@ function render(timestamp, frame) {
 
   renderer.render(scene, camera);
 }
+
