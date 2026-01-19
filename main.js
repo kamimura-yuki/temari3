@@ -1,10 +1,9 @@
+import * as THREE from "three";
+import { ARButton } from "three/addons/webxr/ARButton.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
 console.log("main.js loaded");
-alert("main.js loaded");
-
-
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-import { ARButton } from "https://unpkg.com/three@0.160.0/examples/jsm/webxr/ARButton.js";
-import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+// alert("main.js loaded"); // 動いたら消す
 
 let camera, scene, renderer;
 let controller;
@@ -28,10 +27,8 @@ function init() {
   renderer.xr.enabled = true;
   document.body.appendChild(renderer.domElement);
 
-  // 軽いライト（暗い/真っ黒対策）
   scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
 
-  // レティクル（置ける位置の目印）
   const ringGeo = new THREE.RingGeometry(0.06, 0.08, 32).rotateX(-Math.PI / 2);
   const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   reticle = new THREE.Mesh(ringGeo, ringMat);
@@ -39,14 +36,12 @@ function init() {
   reticle.visible = false;
   scene.add(reticle);
 
-  // GLBロード
   const loader = new GLTFLoader();
   loader.load("./model.glb", (gltf) => {
     model = gltf.scene;
-    model.scale.setScalar(0.3); // 適宜調整
+    model.scale.setScalar(0.3);
   });
 
-  // AR開始ボタン
   document.body.appendChild(
     ARButton.createButton(renderer, {
       requiredFeatures: ["hit-test"],
@@ -55,7 +50,6 @@ function init() {
     })
   );
 
-  // タップで配置
   controller = renderer.xr.getController(0);
   controller.addEventListener("select", onSelect);
   scene.add(controller);
@@ -66,7 +60,6 @@ function init() {
 function onSelect() {
   if (!reticle.visible || !model) return;
 
-  // 既存があれば消して置き直し（好みで複数配置にもできる）
   const existing = scene.getObjectByName("placedModel");
   if (existing) scene.remove(existing);
 
@@ -124,4 +117,3 @@ function render(timestamp, frame) {
 
   renderer.render(scene, camera);
 }
-
