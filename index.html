@@ -17,63 +17,22 @@
       font: 14px/1.4 system-ui;
       z-index: 10;
     }
-    #dbg {
-      position: fixed;
-      left: 8px;
-      right: 8px;
-      bottom: 8px;
-      max-height: 45vh;
-      overflow: auto;
-      background: rgba(0,0,0,.8);
-      color: #fff;
-      padding: 10px;
-      border-radius: 10px;
-      z-index: 9999;
-      white-space: pre-wrap;
-      font: 12px/1.4 system-ui;
-    }
   </style>
+
+  <!-- ここが肝：three / three/addons を解決できるようにする -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <div id="info">Android Chromeで開いて「Enter AR」。床をスキャン → 画面タップで配置</div>
 
-  <!-- 手順B：スマホだけで main.js の読み込み/import の成否を表示 -->
-  <pre id="dbg"></pre>
-
-  <script type="module">
-    const dbg = document.getElementById('dbg');
-    dbg.textContent = "inline module: OK\n";
-
-    // キャッシュ回避（数字を変えると確実）
-    const v = 1;
-    const mainUrl = `./main.js?v=${v}`;
-
-    // 1) fetch で main.js が取れるか確認
-    try {
-      const r = await fetch(mainUrl, { cache: "no-store" });
-      dbg.textContent += `fetch main.js: ${r.status} ${r.statusText}\n`;
-      dbg.textContent += `content-type: ${r.headers.get("content-type")}\n`;
-
-      const txt = await r.text();
-      const head = txt.slice(0, 200).replace(/\n/g, "\\n");
-      dbg.textContent += `main.js head: ${head}\n`;
-    } catch (e) {
-      dbg.textContent += `fetch failed: ${e}\n`;
-    }
-
-    // 2) import できるか確認（ここで失敗したらエラーが出る）
-    try {
-      await import(mainUrl);
-      dbg.textContent += "import main.js: OK\n";
-    } catch (e) {
-      dbg.textContent += "import main.js: FAILED\n";
-      dbg.textContent += (e?.stack || e) + "\n";
-      console.error(e);
-    }
-
-    // 3) 参考情報
-    dbg.textContent += `secureContext: ${window.isSecureContext}\n`;
-    dbg.textContent += `navigator.xr exists: ${"xr" in navigator}\n`;
-  </script>
+  <!-- キャッシュ回避のため ?v= は数字を増やしてOK -->
+  <script type="module" src="./main.js?v=1"></script>
 </body>
 </html>
